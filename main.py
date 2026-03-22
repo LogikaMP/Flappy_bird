@@ -1,11 +1,11 @@
 # імпортуємо бібліотеку pygame (для створення гри)
-import 
+import pygame
 # імпортуємо наші класи (пташка, труби, кнопка)
-from 
+from my_class import*
 
 
 # запускаємо pygame (обов'язково перед використанням)
-pygame.
+pygame.init()
 
 
 # ---------------- НАЛАШТУВАННЯ ГРИ ----------------
@@ -13,19 +13,19 @@ pygame.
 # розмір ігрового вікна:
 # WIDTH = ширина (600 пікселів)
 # HEIGHT = висота (400 пікселів)
-W
-
+WIDTH = 600
+HEIGHT = 400
 # розмір пташки:
 # ширина 50 px, висота 50 px
-S
+SIZE = 50
 
 # розмір труби:
 # ширина 50 px, висота 300 px
-W
-
+WIDTH_PIPES = 50
+HEIGHT_PIPES = 300
 # швидкість руху труб:
 # 2 пікселя за кадр (чим більше число — тим швидше)
-SP
+SPEED = 2
 
 
 # ---------------- ФУНКЦІЇ ----------------
@@ -34,27 +34,28 @@ SP
 def start_game():
     # беремо глобальну змінну
     # змінюємо стан гри на "game"
-
+    global game_part
+    game_part = "game"
 
 # ---------------- СТВОРЕННЯ ВІКНА ----------------
 
 # створюємо вікно гри з розміром 600x400
-window = 
+window = pygame.display.set_mode((WIDTH, HEIGHT))
 # встановлюємо назву вікна
-pygame.
+pygame.display.set_caption("Flappy bird")
 
 
 # ---------------- ЗАВАНТАЖЕННЯ КАРТИНОК ----------------
 
 # фон стартового екрану fon_start.png
-fon_start = 
+fon_start = pygame.image.load("fon_start.png")
 # фон гри fon_game.png
-fon_game = 
+fon_game = pygame.image.load("fon_game.png")
 
 
 # ---------------- ЧАС ----------------
 # створюємо таймер (щоб гра працювала з FPS)
-clock = 
+clock = pygame.time.Clock()
 
 # ---------------- ОБ'ЄКТИ ----------------
 
@@ -65,7 +66,9 @@ clock =
 # текст "Start"
 # колір тексту білий "#FFFFFF"
 # функція при натисканні → start_game
-btn_start = 
+btn_start = Button(x=200, y=150, w=200, h=100,
+                   color="#00FF00",text="Start",
+                   color_text="#FFFFFF",command=start_game)
 
 
 # створюємо пташку:- використовує клас(треба його написати )Bird
@@ -74,14 +77,16 @@ btn_start =
 # швидкість падіння = 5
 # список картинок (анімація) ["bird1.png", "bird2.png"]
 # None — звук або додатковий параметр (не використовується)
-bird = 
+bird = Bird(x = 100, y = 200, s = 50,
+            speed = 5, frames = ["bird1.png", "bird2.png"])
 
 
 # створюємо труби:використовує клас(треба його написати ) Pipes(
 # ширина=50, висота=300
 # швидкість руху=2
 # картинки труб (верхня і нижня)
-pipes = 
+pipes = Pipes(w = 50, h = 300,
+              speed=2, img_1="pipe_down.png", img_2="pipe_up.png")
 
 
 # ---------------- ЗМІННІ ГРИ ----------------
@@ -109,24 +114,31 @@ while run:
     if game_part == "start":
 
         # малюємо фон старту (позиція 0,0)
-        wi
+        window.blit(fon_start,(0,0))
 
         # малюємо кнопку
-        b
+        btn_start.draw(window)
         # перевіряємо натискання кнопки
-        b
+        btn_start.is_clicked()
 
 
     # ---------------- ОСНОВНА ГРА ----------------
     elif game_part == "game":
 
         # малюємо фон гри
-        w
+        window.blit(fon_game,(0,0))
         # оновлюємо пташку (рух, гравітація, малювання)
-        bi
+        bird.update(window)
         # оновлюємо труби (рух, генерація, малювання)
-        pi
+        pipes.update(window)
 
+        for i in range(10):
+            if bird.rect.colliderect(pipes.pipes_up[i].rect):
+                game_part = "restart"
+            if bird.rect.colliderect(pipes.pipes_down[i].rect):
+                game_part = "restart"
+    elif game_part == "restart":
+        window.blit(fon_start,(0,0))
     # встановлюємо FPS (60 кадрів в секунду)
     clock.tick(60)
     # оновлюємо екран (показує всі зміни)
