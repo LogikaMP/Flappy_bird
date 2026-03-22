@@ -153,15 +153,15 @@ class Button(Sprite):  # Створюємо клас кнопки, який на
 
 
 # клас пташки, наслідується від Sprite
-class Bird():
+class Bird(Sprite):
      # конструктор (створення об'єкта) - замість картинки додаємо аргументи кадри frame - для анімації
-     def __init__
+     def __init__(self,x,y,s,speed,frames):
           # викликаємо конструктор батьківського класу Sprite
           # None - замість картинки (бо будемо міняти кадри)
           # None - замість - коліру 
-          s
+          super().__init__(x,y,s,s,speed,None,None)
           # список картинок для анімації (наприклад ["bird1.png", "bird2.png"])
-          self.f
+          self.frames = frames
           # таймер для перемикання кадрів
           self.timer_anime = 0
           # індекс поточного кадру (яка картинка зараз)
@@ -174,28 +174,28 @@ class Bird():
      def anime(self):
           # беремо поточну картинку 
           # зі списку self.frame зі списку за індексом  self.i_frame
-          self.image = 
+          self.image = self.frames[self.i_frame]
           # завантажуємо картинку
           self.load_img()
 
           # збільшуємо таймер
-          self.timer_anime 
+          self.timer_anime += 1
           # якщо пройшло 10 кадрів
-          if s
-               self.       # обнуляємо таймер
-               self.       # переходимо до наступного кадру
+          if self.timer_anime >= 10:
+               self.timer_anime = 0       # обнуляємо таймер
+               self.i_frame += 1       # переходимо до наступного кадру
 
                # якщо кадри закінчились
                # (self.i_frame більше дорівнює довжині списку кадрів self.frame) — 
                # починаємо спочатку
-               if s
-                    se
+               if self.i_frame >= len(self.frames):
+                    self.i_frame = 0
 
      # оновлення пташки (викликається кожен кадр)
      def update(self, window):
-          self.   # намалювати пташку
-          self.        # змінити кадр (анімація)
-          self.   # рух
+          self.draw(window)   # намалювати пташку
+          self.anime()        # змінити кадр (анімація)
+          self.move(window)   # рух
 
 
      # рух пташки(аналогічний руху в класі Sprite - лише вгору та вниз)
@@ -214,7 +214,7 @@ class Bird():
 # клас труб
 class Pipes:
      # створення труб - висота, ширина, швидкість, картинки для труб
-     def 
+     def __init__(self,w,h,speed,img_1,img_2):
           # список верхніх труб
           self.pipes_up = []
           # список нижніх труб
@@ -224,52 +224,53 @@ class Pipes:
           # висота труби (300 px)
           self.h = h
           # початкова позиція X
-          x = 150
+          x = 300
           # створюємо 10 пар труб
           for i in range(10):
                # випадкова висота верхньої труби (-300 до 0)
-               y = 
+               y = randint(-300,0)
                # додаємо верхню трубу - об'єкт класу Sprite
-               self.pipes_up.
+               self.pipes_up.append(Sprite(x,y,w,h,speed,img_1))
                # створюємо нижню трубу (з відступом 100 px)
-               y = 
-               self.pipes_down.
+               y = y + self.h + 100
+               self.pipes_down.append(Sprite(x,y,w,h,speed,img_2))
                # зміщуємо наступну пару труб вправо
-               x   # відстань між трубами 200 px
+               x  += 200 # відстань між трубами 200 px
 
 
      # малювання труб
      def draw(self, window):
           for i in range(10):
-               self.     # верхня труба
-               self.   # нижня труба
+               self.pipes_up[i].draw(window)     # верхня труба
+               self.pipes_down[i].draw(window)   # нижня труба
 
 
      # рух труб
      def move(self):
           for i in range(10):
                # рух вліво врехніьої та нижньої труби
-               self.pipes_up[i].rect.x 
-               self.
+               self.pipes_up[i].rect.x -= self.speed
+               self.pipes_down[i].rect.x -= self.speed
                # якщо труба повністю вийшла за екран (ліворуч)
                #  первіряємо праву координату ректа верхньої труби 
-               if self.
+               if self.pipes_up[i].rect.right < 0:
                     # знаходимо координату  самої правої трубу
                     max_x = max(pipe.rect.x for pipe in self.pipes_up)
                     # переносимо поточну верхню  трубу вправо + відступ між трубами 200
-                    self.pipes_up
+                    self.pipes_up[i].rect.x = max_x + 200
+                    self.pipes_down[i].rect.x = max_x + 200
                     # нова випадкова висота для верхньої труби
-                    y = 
-                    self.
+                    y = randint(-300,0)
+                    self.pipes_up[i].rect.y = y
                     # синхронно переносимо нижню трубу - відступ по вретикалі 100
-                    self.p
-                    self.p
+                    y = y + self.h + 100
+                    self.pipes_down[i].rect.y = y
 
 
      # оновлення труб
      def update(self, window):
-          self.  # намалювати
-          self.       # рух
+          self.draw(window)  # намалювати
+          self.move()       # рух
 
 
           
