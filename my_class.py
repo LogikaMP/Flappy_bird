@@ -168,6 +168,9 @@ class Bird(Sprite):
           self.i_frame = 0
           # одразу запускаємо анімацію
           self.anime()
+
+          '''дода властивість - сила гравітації що тягне пташку вниз'''
+      
      
 
      # функція анімації пташки
@@ -200,14 +203,21 @@ class Bird(Sprite):
 
      # рух пташки(аналогічний руху в класі Sprite - лише вгору та вниз)
      def move(self, window):
-         # отримуємо натиснуті клавіші
-         key = pygame.key.get_pressed()
-         # якщо натиснута W і пташка не вилітає за верх
-         if key[pygame.K_w] and self.rect.y >= self.speed:
-              self.rect.y -= self.speed   # рух вгору
-         # якщо натиснута S і не виходимо за низ екрану
-         if key[pygame.K_s] and self.rect.bottom <= window.get_height() - self.speed:
-              self.rect.y += self.speed   # рух вниз
+          '''закоментуй весь рух пташки та додай:
+               1. Силу гравітації - пташку тяге вниз
+               2. Обмеження рух вгору - 
+                    якщо координата у менша 0 => робимо координату 1
+               3. Обмежння руху вниз -
+                    якщо нижня координати пташки більша за висоту вікна робимо 
+                    нижню координату висто_вікна - 1'''
+          # отримуємо натиснуті клавіші
+          key = pygame.key.get_pressed()
+          # якщо натиснута W і пташка не вилітає за верх
+          if key[pygame.K_w] and self.rect.y >= self.speed:
+               self.rect.y -= self.speed   # рух вгору
+          # якщо натиснута S і не виходимо за низ екрану
+          if key[pygame.K_s] and self.rect.bottom <= window.get_height() - self.speed:
+               self.rect.y += self.speed   # рух вниз
 
 
 
