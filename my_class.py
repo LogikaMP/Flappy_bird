@@ -161,34 +161,37 @@ class Bird(Sprite):
           # None - замість - коліру 
           super().__init__(x,y,s,s,speed,None,None)
           # список картинок для анімації (наприклад ["bird1.png", "bird2.png"])
-          self.frame = frames
+          self.frames = frames
           # таймер для перемикання кадрів
           self.timer_anime = 0
           # індекс поточного кадру (яка картинка зараз)
           self.i_frame = 0
           # одразу запускаємо анімацію
           self.anime()
+
+          '''дода властивість - сила гравітації що тягне пташку вниз'''
+      
      
 
      # функція анімації пташки
      def anime(self):
           # беремо поточну картинку 
           # зі списку self.frame зі списку за індексом  self.i_frame
-          self.image = self.frame[self.i_frame]
+          self.image = self.frames[self.i_frame]
           # завантажуємо картинку
           self.load_img()
 
           # збільшуємо таймер
           self.timer_anime += 1
           # якщо пройшло 10 кадрів
-          if self.timer_anime >=10:
+          if self.timer_anime >= 10:
                self.timer_anime = 0       # обнуляємо таймер
                self.i_frame += 1       # переходимо до наступного кадру
 
                # якщо кадри закінчились
                # (self.i_frame більше дорівнює довжині списку кадрів self.frame) — 
                # починаємо спочатку
-               if self.i_frame >=len(self.frame):
+               if self.i_frame >= len(self.frames):
                     self.i_frame = 0
 
      # оновлення пташки (викликається кожен кадр)
@@ -200,14 +203,21 @@ class Bird(Sprite):
 
      # рух пташки(аналогічний руху в класі Sprite - лише вгору та вниз)
      def move(self, window):
-         # отримуємо натиснуті клавіші
-         key = pygame.key.get_pressed()
-         # якщо натиснута W і пташка не вилітає за верх
-         if key[pygame.K_w] and self.rect.y >= self.speed:
-              self.rect.y -= self.speed   # рух вгору
-         # якщо натиснута S і не виходимо за низ екрану
-         if key[pygame.K_s] and self.rect.bottom <= window.get_height() - self.speed:
-              self.rect.y += self.speed   # рух вниз
+          '''закоментуй весь рух пташки та додай:
+               1. Силу гравітації - пташку тяге вниз
+               2. Обмеження рух вгору - 
+                    якщо координата у менша 0 => робимо координату 1
+               3. Обмежння руху вниз -
+                    якщо нижня координати пташки більша за висоту вікна робимо 
+                    нижню координату висто_вікна - 1'''
+          # отримуємо натиснуті клавіші
+          key = pygame.key.get_pressed()
+          # якщо натиснута W і пташка не вилітає за верх
+          if key[pygame.K_w] and self.rect.y >= self.speed:
+               self.rect.y -= self.speed   # рух вгору
+          # якщо натиснута S і не виходимо за низ екрану
+          if key[pygame.K_s] and self.rect.bottom <= window.get_height() - self.speed:
+               self.rect.y += self.speed   # рух вниз
 
 
 
@@ -228,14 +238,14 @@ class Pipes:
           # створюємо 10 пар труб
           for i in range(10):
                # випадкова висота верхньої труби (-300 до 0)
-               y = randint(-300, 0)
+               y = randint(-300,0)
                # додаємо верхню трубу - об'єкт класу Sprite
                self.pipes_up.append(Sprite(x,y,w,h,speed,img_1))
                # створюємо нижню трубу (з відступом 100 px)
                y = y + self.h + 100
                self.pipes_down.append(Sprite(x,y,w,h,speed,img_2))
                # зміщуємо наступну пару труб вправо
-               x += 200  # відстань між трубами 200 px
+               x  += 200 # відстань між трубами 200 px
 
 
      # малювання труб
@@ -260,7 +270,7 @@ class Pipes:
                     self.pipes_up[i].rect.x = max_x + 200
                     self.pipes_down[i].rect.x = max_x + 200
                     # нова випадкова висота для верхньої труби
-                    y = randint(-300, 0)
+                    y = randint(-300,0)
                     self.pipes_up[i].rect.y = y
                     # синхронно переносимо нижню трубу - відступ по вретикалі 100
                     y = y + self.h + 100
