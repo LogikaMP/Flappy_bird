@@ -171,6 +171,7 @@ class Bird(Sprite):
 
           '''дода властивість - сила гравітації що тягне пташку вниз'''
       
+          self.gravity = 0.8
      
 
      # функція анімації пташки
@@ -210,14 +211,20 @@ class Bird(Sprite):
                3. Обмежння руху вниз -
                     якщо нижня координати пташки більша за висоту вікна робимо 
                     нижню координату висто_вікна - 1'''
-          # отримуємо натиснуті клавіші
-          key = pygame.key.get_pressed()
-          # якщо натиснута W і пташка не вилітає за верх
-          if key[pygame.K_w] and self.rect.y >= self.speed:
-               self.rect.y -= self.speed   # рух вгору
-          # якщо натиснута S і не виходимо за низ екрану
-          if key[pygame.K_s] and self.rect.bottom <= window.get_height() - self.speed:
-               self.rect.y += self.speed   # рух вниз
+          self.rect.y += self.gravity
+          if self.rect.y < 0:
+               self.rect.y = 1
+          if self.rect.bottom > window.get_height():
+               self.rect.bottom = window.get_height() - 1
+
+          # # отримуємо натиснуті клавіші
+          # key = pygame.key.get_pressed()
+          # # якщо натиснута W і пташка не вилітає за верх
+          # if key[pygame.K_w] and self.rect.y >= self.speed:
+          #      self.rect.y -= self.speed   # рух вгору
+          # # якщо натиснута S і не виходимо за низ екрану
+          # if key[pygame.K_s] and self.rect.bottom <= window.get_height() - self.speed:
+          #      self.rect.y += self.speed   # рух вниз
 
 
 
@@ -234,7 +241,7 @@ class Pipes:
           # висота труби (300 px)
           self.h = h
           # початкова позиція X
-          x = 300
+          x = 400
           # створюємо 10 пар труб
           for i in range(10):
                # випадкова висота верхньої труби (-300 до 0)
@@ -242,10 +249,10 @@ class Pipes:
                # додаємо верхню трубу - об'єкт класу Sprite
                self.pipes_up.append(Sprite(x,y,w,h,speed,img_1))
                # створюємо нижню трубу (з відступом 100 px)
-               y = y + self.h + 100
+               y = y + self.h + 150
                self.pipes_down.append(Sprite(x,y,w,h,speed,img_2))
                # зміщуємо наступну пару труб вправо
-               x  += 200 # відстань між трубами 200 px
+               x  += 300 # відстань між трубами 200 px
 
 
      # малювання труб
@@ -267,13 +274,13 @@ class Pipes:
                     # знаходимо координату  самої правої трубу
                     max_x = max(pipe.rect.x for pipe in self.pipes_up)
                     # переносимо поточну верхню  трубу вправо + відступ між трубами 200
-                    self.pipes_up[i].rect.x = max_x + 200
-                    self.pipes_down[i].rect.x = max_x + 200
+                    self.pipes_up[i].rect.x = max_x + 300
+                    self.pipes_down[i].rect.x = max_x + 300
                     # нова випадкова висота для верхньої труби
                     y = randint(-300,0)
                     self.pipes_up[i].rect.y = y
                     # синхронно переносимо нижню трубу - відступ по вретикалі 100
-                    y = y + self.h + 100
+                    y = y + self.h + 150
                     self.pipes_down[i].rect.y = y
 
 
